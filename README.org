@@ -1,0 +1,51 @@
+* Building
+
+** Prerequisites
+You need to have:
+
++ ~Clang~ 
++ ~CMake~
++ ~glew~
++ ~glfw~
+
+installed on your system.
+
+On ~Arch Linux~ you can install all of them with:
+#+begin_src shell
+  pacman -S --needed cmake clang glew glfw
+#+end_src
+
+If you are using other distros, use your package 
+manager to look up package names, and install them.
+
+This may or may not work on ~Windows~ or ~MacOS~, but
+hasn't been tested on either.
+
+
+** Installation
+*Clone this repository:*
+
+#+begin_src shell
+  git clone git@github.com:alexpaniman/sphere-raycaster.git
+#+end_src
+
+*Then, create build directory and configure:*
+
+#+begin_src shell
+  mkdir -p build
+  cd build
+  cmake .. -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release
+  # Make sure that you use recent clang!
+  # Projects uses some pretty new features.
+#+end_src
+
+Optionally you can use ~-DCMAKE_EXPORT_COMPILE_COMMANDS=ON~ if you
+want to import this project with ~clangd~ language server.
+
+And ~-DFORCE_COLORED_OUTPUT=ON~ to get colorful diagnostics with ~Ninja~
+
+Now compile and run (you should still in ~build~ directory):
+#+begin_src shell
+  ninja
+  ./compass-and-straightedge
+#+end_src
