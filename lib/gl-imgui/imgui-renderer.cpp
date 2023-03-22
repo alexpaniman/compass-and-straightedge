@@ -4,6 +4,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "renderer.h"
+
+#include "icons-font-awesome-5.h"
+
 #include <exception>
 
 namespace gl::imgui {
@@ -55,6 +58,20 @@ namespace gl::imgui {
         // Setup renderers
         setup_current_renderer(ui_renderer);
         setup_current_renderer(main_renderer);
+
+        // ==> setup ImGui font awesome rendering:
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.Fonts->AddFontDefault();
+
+        // merge in icons from Font Awesome
+        static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+
+        ImFontConfig icons_config;
+        icons_config.MergeMode  = true;
+        icons_config.PixelSnapH = true;
+
+        io.Fonts->AddFontFromFileTTF("res/fa-solid-900.ttf", 16.0f, &icons_config, icons_ranges);
     };
 
     void imgui_renderer::draw()  {

@@ -35,10 +35,12 @@ static inline line_equation calculate_line_equation(const line &line) {
 bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &points) const {
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
-    double r = circle.radius;
-    auto [a, b, c] = calculate_line_equation(*this);
+    line relative = { x0 - circle.center, x1 - circle.center };
 
-    double x0 = - a * c / (pow(a, 2) + pow(b, 2)), y0 = - b * c / (a * a + b * b);
+    double r = circle.radius;
+    auto [a, b, c] = calculate_line_equation(relative);
+
+    double x0 = - a * c / (pow(a, 2) + pow(b, 2)), y0 = - b * c / (pow(a, 2) + pow(b, 2));
     if (pow(c, 2) > pow(r, 2) * (pow(a, 2) + pow(b, 2)) + eps)
         return false;
 
@@ -50,8 +52,13 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
     double d = pow(r, 2) - pow(c, 2) / (pow(a, 2) + pow(b, 2));
     double mult = sqrt (d / (pow(a, 2) + pow(b, 2)));
 
-    points.emplace_back(x0 + b * mult, y0 - a * mult);
-    points.emplace_back(x0 - b * mult, y0 + a * mult);
+    math::vec2 intersections[] = {
+        { x0 + b * mult, y0 - a * mult },
+        { x0 - b * mult, y0 + a * mult }
+    };
+
+    for (auto &&intersection: intersections)
+        points.emplace_back(intersection + circle.center);
 
     return true;
 }
@@ -76,10 +83,10 @@ static void draw_continuation_dashed(gl::drawing_manager mgr, math::vec2 from, m
 }
 
 void line::draw(gl::drawing_manager mgr) const {
-    mgr.set_color({ 0.7f, 0.7f, 0.2f });
+    mgr.set_color({ 0.9f, 0.2f, 0.3f });
     mgr.draw_line(x0, x1);
 
-    mgr.set_color({ 0.4f, 0.2f, 0.8f });
+    mgr.set_color({ 0.99f, 0.59f, 0.39f });
     draw_continuation_dashed(mgr, x1, x0);
     draw_continuation_dashed(mgr, x0, x1);
 }

@@ -14,16 +14,16 @@ bool circle::intersect_circle(const circle &other, std::vector<math::vec2> &poin
         / (2 * distance);
 
     float height = sqrt(radius * radius - pow(dl, 2));
-    math::vec middle = (center - other.center) * (dl / distance) + center;
+    math::vec middle = (center - other.center) * (dl / distance) - center;
 
     points.emplace_back(
-        - middle.x() - height * (other.center.y() - center.y()) / distance,
-        - middle.y() + height * (other.center.x() - center.x()) / distance
+        - middle.x() - height * dy / distance,
+        - middle.y() + height * dx / distance
     );
 
     points.emplace_back(
-        - middle.x() + height * (other.center.y() - center.y()) / distance,
-        - middle.y() - height * (other.center.x() - center.x()) / distance
+        - middle.x() + height * dy / distance,
+        - middle.y() - height * dx / distance
     );
 
     return true;
@@ -31,13 +31,14 @@ bool circle::intersect_circle(const circle &other, std::vector<math::vec2> &poin
 
 template <bool fill> 
 static inline void draw_or_fill(const circle &circle, gl::drawing_manager mgr) {
-    constexpr double step = 0.05;
+    double segments = ceil(std::max(16. * log(circle.radius / 0.005 + 1), 8.));
+    double step = 2 * M_PI / segments;
 
     // Rotate current and previous around circle's center
     math::vec2 current = circle.center + math::vec2 { 0.f, static_cast<float>(circle.radius) };
     math::vec2 previous = { 0.f, 0.f };
 
-    double max_angle = ceil(2 * M_PI / step) * step;
+    double max_angle = ceil(ceil(2 * M_PI / step) * step);
     for (double angle = 0.0; angle <= max_angle; angle += step) {
         current.rotate(circle.center, step);
 

@@ -35,7 +35,7 @@ namespace gl::imgui {
         void window_draw() override final {}
 
         virtual void draw_ui() {}
-        virtual void draw_main(gl::drawing_manager mgr) {}
+        virtual void draw_main([[maybe_unused]] gl::drawing_manager mgr) {}
 
         virtual void init() {}
 
@@ -63,11 +63,11 @@ namespace gl::imgui {
 
             io.AddMousePosEvent(xpos, ypos);
 
-            if (io.WantCaptureMouse)
+            if (!io.WantCaptureMouse)
                 on_mouse_moved(cursor);
         }
 
-        virtual void on_mouse_moved(math::vec2 cursor) {}
+        virtual void on_mouse_moved([[maybe_unused]] math::vec2 cursor) {}
 
 
         void on_mouse_button_event(math::vec2 cursor, gl::mouse_button button, gl::action action) override {

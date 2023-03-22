@@ -190,7 +190,7 @@ namespace gl {
     static std::map<GLFWwindow*, gl::window*> window_mapping {};
 
     window::window(const int width, const int height, const char* title)
-        : current_fps(0), width(width), height(height) {
+        : width(width), height(height), current_fps(0) {
 
         if (!glfwInit())
             throw std::runtime_error("Failed to initialize glfw!");

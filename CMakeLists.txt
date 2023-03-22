@@ -53,6 +53,7 @@ add_subdirectory(lib/gl)
 add_subdirectory(lib/axp)
 add_subdirectory(lib/imgui)
 add_subdirectory(lib/gl-imgui)
+add_subdirectory(lib/font-awesome)
 
 # ==> Add project's core 
 
