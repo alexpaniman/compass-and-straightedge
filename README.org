@@ -44,7 +44,7 @@ hasn't been tested on either.
 *Clone this repository:*
 
 #+begin_src shell
-  git clone git@github.com:alexpaniman/sphere-raycaster.git
+  git clone git@github.com:alexpaniman/compass-and-straightedge.git
 #+end_src
 
 *Then, create build directory and configure:*
