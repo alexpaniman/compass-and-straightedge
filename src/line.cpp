@@ -23,11 +23,11 @@ bool line::intersect_line(const line& line, std::vector<math::vec2> &points) con
 }
 
 
-struct line_equation { double a, b, c; };
+struct line_equation { float a, b, c; };
 static inline line_equation calculate_line_equation(const line &line) {
-    double a = line.x0.y() - line.x1.y();
-    double b = line.x1.x() - line.x0.x();
-    double c = (line.x0.x() - line.x1.x()) * line.x0.y() + (line.x1.y() - line.x0.y()) * line.x0.x();
+    float a = line.x0.y() - line.x1.y();
+    float b = line.x1.x() - line.x0.x();
+    float c = (line.x0.x() - line.x1.x()) * line.x0.y() + (line.x1.y() - line.x0.y()) * line.x0.x();
 
     return { a, b, c };
 }
@@ -37,10 +37,10 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
 
     line relative = { x0 - circle.center, x1 - circle.center };
 
-    double r = circle.radius;
+    float r = circle.radius;
     auto [a, b, c] = calculate_line_equation(relative);
 
-    double x0 = - a * c / (pow(a, 2) + pow(b, 2)), y0 = - b * c / (pow(a, 2) + pow(b, 2));
+    float x0 = - a * c / (pow(a, 2) + pow(b, 2)), y0 = - b * c / (pow(a, 2) + pow(b, 2));
     if (pow(c, 2) > pow(r, 2) * (pow(a, 2) + pow(b, 2)) + eps)
         return false;
 
@@ -49,8 +49,8 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
         return true;
     }
 
-    double d = pow(r, 2) - pow(c, 2) / (pow(a, 2) + pow(b, 2));
-    double mult = sqrt (d / (pow(a, 2) + pow(b, 2)));
+    float d = pow(r, 2) - pow(c, 2) / (pow(a, 2) + pow(b, 2));
+    float mult = sqrt (d / (pow(a, 2) + pow(b, 2)));
 
     math::vec2 intersections[] = {
         { x0 + b * mult, y0 - a * mult },

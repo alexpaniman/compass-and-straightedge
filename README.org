@@ -58,7 +58,7 @@ hasn't been tested on either.
 #+begin_src shell
   mkdir -p build
   cd build
-  cmake .. -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Debug
+  cmake .. -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release
   # Make sure that you use recent clang!
   # Projects uses some pretty new features.
 #+end_src

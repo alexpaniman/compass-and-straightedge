@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
 
 jobs:
   linux-build:
@@ -19,7 +19,7 @@ jobs:
         submodules: 'true'
 
     - name: Install dependencies
-      run: sudo apt-get install -y cmake ninja-build clang libglew-dev libglfw3-dev
+      run: sudo apt-get install -y cmake clang libglew-dev libglfw3-dev
 
     - name: Configure
       run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
