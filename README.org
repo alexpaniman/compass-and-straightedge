@@ -2,9 +2,9 @@
 The name should be pretty self-explanatory.
 
 When you open it, you will, hopefully, see an empty canvas with three buttons in the top left corner:
-+ 1 button, called "Points", allows you to place points in an arbitrary place on the canvas.
-+ 2 button, called "Compass", gives you a way to draw circles by specifying its center and radius. If you click on something other than point, the tool will reset itself.
-+ 3 button, called "Line", allows you to connect any two points. The same way, as compass, you can reset it by clicking on an empty on the canvas.
++ 1 button, called "*Point*", allows you to place points in an arbitrary place on the canvas.
++ 2 button, called "*Compass*", gives you a way to draw circles by specifying its center and radius. If you click on something other than point, the tool will reset itself.
++ 3 button, called "*Line*", allows you to connect any two points. The same way, as compass, you can reset it by clicking on an empty on the canvas.
 
 When you draw place some lines or circles, you will immediately see its intersections with all other shapes.
 
@@ -30,7 +30,13 @@ installed on your system.
 
 On ~Arch Linux~ you can install all of them with:
 #+begin_src shell
-  pacman -S --needed cmake clang glew glfw
+  pacman -Sy --needed cmake ninja clang glew glfw
+#+end_src
+
+On ~Ubuntu~ you can install them with:
+
+#+begin_src shell
+  sudo apt-get install -y cmake ninja-build clang libglew-dev libglfw3-dev
 #+end_src
 
 If you are using other distros, use your package 
@@ -52,7 +58,7 @@ hasn't been tested on either.
 #+begin_src shell
   mkdir -p build
   cd build
-  cmake .. -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release
+  cmake .. -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Debug
   # Make sure that you use recent clang!
   # Projects uses some pretty new features.
 #+end_src
@@ -62,7 +68,7 @@ want to import this project with ~clangd~ language server.
 
 And ~-DFORCE_COLORED_OUTPUT=ON~ to get colorful diagnostics with ~Ninja~
 
-Now compile and run (you should still in ~build~ directory):
+Now build and run (you should still be in ~build~ directory):
 #+begin_src shell
   ninja
   ./compass-and-straightedge
