@@ -1,6 +1,24 @@
-* Building
+* Compass and straightedge constructor
+The name should be pretty self-explanatory.
 
-** Prerequisites
+When you open it, you will, hopefully, see an empty canvas with three buttons in the top left corner:
++ 1 button, called "Points", allows you to place points in an arbitrary place on the canvas.
++ 2 button, called "Compass", gives you a way to draw circles by specifying its center and radius. If you click on something other than point, the tool will reset itself.
++ 3 button, called "Line", allows you to connect any two points. The same way, as compass, you can reset it by clicking on an empty on the canvas.
+
+When you draw place some lines or circles, you will immediately see its intersections with all other shapes.
+
+Even though, there are only three available tools, you can still build pretty complex constructions with it, to give you an example of something arbitrary:
+
+[[file:img/example-drawing.png]]
+
+/Beware, its still very early in its development, so expect bugs, inconveniences, etc... (i mean now it doesn't even have a way to hide objects or undo button...) Report bugs if you can, much appreciated./
+
+*I wish you fun construction!*
+
+** Building
+
+*** Prerequisites
 You need to have:
 
 + ~Clang~ 
@@ -22,7 +40,7 @@ This may or may not work on ~Windows~ or ~MacOS~, but
 hasn't been tested on either.
 
 
-** Installation
+*** Installation
 *Clone this repository:*
 
 #+begin_src shell
