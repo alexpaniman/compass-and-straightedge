@@ -353,8 +353,19 @@ namespace details {
         constexpr impl_type& rotate(double angle) {
             static_assert(count == 2, "Rotation for now is impemented only for 2D case!");
 
-            x() = static_cast<element_type>(cos(angle) * x() - sin(angle) * y());
-            y() = static_cast<element_type>(sin(angle) * x() + cos(angle) * y());
+            double new_x = static_cast<element_type>(cos(angle) * x() - sin(angle) * y());
+            y()          = static_cast<element_type>(sin(angle) * x() + cos(angle) * y());
+
+            x() = new_x;
+
+            return *get_impl();
+        }
+
+        template <typename other_vector>
+        constexpr impl_type& rotate(const other_vector& pivot, double angle) {
+            (*this) -= pivot;
+            rotate(angle);
+            (*this) += pivot;
 
             return *get_impl();
         }
@@ -369,6 +380,12 @@ namespace details {
         constexpr impl_type rotated(double angle) const {
             impl_type new_vec = *get_impl();
             return new_vec.rotate(angle);
+        }
+
+        template <typename other_vector>
+        constexpr impl_type rotated(const other_vector &pivot, double angle) const {
+            impl_type new_vec = *get_impl();
+            return new_vec.rotate(pivot, angle);
         }
 
         constexpr impl_type normalized() const {
