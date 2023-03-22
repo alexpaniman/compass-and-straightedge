@@ -56,38 +56,30 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
     return true;
 }
 
-static void draw_dashed(gl::drawing_manager mgr, math::vec2 from, math::vec2 to) {
-    math::vec2 direction = (to - from).normalize();
-    double len = (to - from).len();
+
+static inline bool within_view(math::vec2 point) {
+    return point.x() >= -1.0f && point.y() >= -1.0f && point.x() <= 1.0f && point.y() <= 1.0f;
+}
+
+static void draw_continuation_dashed(gl::drawing_manager mgr, math::vec2 from, math::vec2 to) {
+    math::vec2 direction = (from - to).normalize();
 
     constexpr double fill_len = 0.05;
     constexpr double frag_len = 0.02 + fill_len;
-    for (int i = 0; i <= len / frag_len; ++ i) {
+    for (int i = 0; ; ++ i) {
         math::vec2 starting_point = direction * frag_len * i + from;
+        if (!within_view(starting_point))
+            break;
 
-        mgr.draw_line(starting_point,
-            starting_point + direction * fill_len);
+        mgr.draw_line(starting_point, starting_point + direction * fill_len);
     }
 }
 
 void line::draw(gl::drawing_manager mgr) const {
-    auto [a, b, c] = calculate_line_equation(*this);
-
-    double y_low = (a - c) / b, y_high = (- a - c) / b;
-    double x_low = (b - c) / a, x_high = (- b - c) / a;
-
-    mgr.set_color({ 0.4f, 0.2f, 0.8f });
-    if (x_low <= y_low)
-        draw_dashed(mgr, { x_low, -1.0f }, x0);
-    else
-        draw_dashed(mgr, { -1.0f, y_low }, x0);
-
     mgr.set_color({ 0.7f, 0.7f, 0.2f });
     mgr.draw_line(x0, x1);
 
     mgr.set_color({ 0.4f, 0.2f, 0.8f });
-    if (x_high <= y_high)
-        draw_dashed(mgr, x1, { x_high,  1.0f });
-    else
-        draw_dashed(mgr, x1, {  1.0f, y_high });
+    draw_continuation_dashed(mgr, x1, x0);
+    draw_continuation_dashed(mgr, x0, x1);
 }
