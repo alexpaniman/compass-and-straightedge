@@ -1,4 +1,4 @@
-add_executable(compass-and-straightedge compass-and-straightedge.cpp)
+add_executable(compass-and-straightedge compass-and-straightedge.cpp line.cpp circle.cpp)
 
 target_include_directories(compass-and-straightedge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
