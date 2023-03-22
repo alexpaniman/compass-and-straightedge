@@ -42,12 +42,14 @@ namespace gl::imgui {
         void window_setup() override final;
 
         void on_key_event(gl::key pressed_key, gl::action action) override {
-            ImGuiIO& io = ImGui::GetIO();
-            io.AddKeyEvent(static_cast<ImGuiKey>(pressed_key),
-                           action == action::PRESS || action == action::REPEAT);
+            // TODO: fix imgui events for this:
 
-            if (io.WantCaptureKeyboard)
-                on_key_pressed(pressed_key, action);
+            // ImGuiIO& io = ImGui::GetIO();
+            // io.AddKeyEvent(static_cast<ImGuiKey>(pressed_key),
+            //                action == action::PRESS || action == action::REPEAT);
+
+            // if (io.WantCaptureKeyboard)
+            on_key_pressed(pressed_key, action);
         }
 
         virtual void on_key_pressed(gl::key key, gl::action action) {}
