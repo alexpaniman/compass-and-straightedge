@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 
 # ==> Force new C++ standard (we like new features here)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(vector-drawer VERSION 1.0)
@@ -26,7 +26,7 @@ if (${FORCE_COLORED_OUTPUT})
 endif ()
 
 # ==> Enable as much optimization as possible (note, some of these are dangerous)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D NDEBUG -mavx2 -march=native -fomit-frame-pointer -mtune=native -Ofast")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D NDEBUG -mavx2 -march=native -fomit-frame-pointer -mtune=native -O2")
 
 # ==> Flags for debugging, enable sanitizers and make debugging experience as good as possible
 
