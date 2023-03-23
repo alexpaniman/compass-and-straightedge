@@ -16,6 +16,8 @@
 #include <stdexcept>
 #include <string>
 #include <cassert>
+#include <chrono>
+#include <thread>
 
 
 namespace gl {
@@ -213,12 +215,12 @@ namespace gl {
         window_mapping[glfw_window] = this;
 
         bind();
+        glfwSwapInterval(1); // Let's try to enable VSync
 
         if (glewInit() != GLEW_OK)
             throw std::runtime_error("Failed to initialize glew!");
 
         glEnable(GL_MULTISAMPLE);
-        // glEnable(GL_BLEND); // Allow transparency
     }
     
     void window::bind() const {
@@ -288,6 +290,11 @@ namespace gl {
         };
     }
 
+    void window::redraw() {
+        gl::raw::clear(GL_COLOR_BUFFER_BIT);
+        draw();
+    }
+
     void window::draw_loop() {
         setup();
 
@@ -297,11 +304,19 @@ namespace gl {
 
         static int fps_counter = 0;
 
+        bool redraw_in_loop = should_redraw_in_loop();
+
+        if (!redraw_in_loop) {
+            redraw(); // allow lazy configuration to happen
+            redraw(); // initial draw
+        }
+
         double last_time = glfwGetTime();
         while (!glfwWindowShouldClose(glfw_window)) {
-            gl::raw::clear(GL_COLOR_BUFFER_BIT);
+            double frame_start_time = glfwGetTime();
 
-            draw();
+            if (redraw_in_loop)
+                redraw();
 
             glfwSwapBuffers(glfw_window);
             glfwPollEvents();
@@ -314,6 +329,16 @@ namespace gl {
 
                 fps_counter = 0;
                 last_time = current_time;
+            }
+
+            using namespace std::chrono_literals;
+
+            double target_fps = desired_fps();
+
+            // sync with desired frame rate:
+            if (target_fps != -1) {
+                double remaining = 1. / target_fps - (current_time - frame_start_time);
+                std::this_thread::sleep_for(remaining * 1s);
             }
         }
     }

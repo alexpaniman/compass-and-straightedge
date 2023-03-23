@@ -16,6 +16,11 @@ class compass_and_straightedge: public gl::imgui::ui_window {
 public:
     using gl::imgui::ui_window::ui_window;
 
+    // configure current window:
+    int desired_fps() override { return 60; }
+    bool should_redraw_in_loop() override { return true; }
+
+
     void draw_ui() override {
         ImGui::Begin("Tools", nullptr, ImGuiWindowFlags_NoDecoration);
 
@@ -27,7 +32,6 @@ public:
         ImGui::End();
     }
 
-    // mgr.set_color({ 1.0f, 0.2f, 0.5f });
     void draw_main(gl::drawing_manager mgr) override {
         // draw background:
         mgr.set_color({ 0.13f, 0.11f, 0.12f });
@@ -49,7 +53,7 @@ public:
     void on_mouse_moved(math::vec2 cursor) override {
         hovered_point_ = -1;
 
-        for (std::size_t i = 0; i < points_.size(); ++ i)
+        for (int i = points_.size() - 1; i >= 0; -- i)
             if ((points_[i] - cursor).len() <= 0.01f) {
                 hovered_point_ = i; // select button when hovered over
                 return;
@@ -65,13 +69,15 @@ public:
 
         if (active_tool_ == poke_point) {
             points_.emplace_back(cursor);
-            manual_points_.emplace_back(cursor);
-        } else if (selected_point_ != -1 && hovered_point_ != -1) {
-            add_shape(points_[hovered_point_]);
-            selected_point_ = -1;
             return;
         }
-        
+
+        if (selected_point_ != -1 && hovered_point_ != -1) {
+            add_shape(points_[hovered_point_]);
+            selected_point_ = hovered_point_ = -1;
+            return;
+        }
+
         selected_point_ = hovered_point_;
     }
 
@@ -79,7 +85,6 @@ private:
     // view of all available shapes:
     std::vector<std::unique_ptr<shape>> shapes_;
     std::vector<math::vec2> points_;
-    std::vector<math::vec2> manual_points_;
 
     int selected_point_ = -1;
     int  hovered_point_ = -1;
@@ -102,8 +107,9 @@ private:
         else {
             assert(false && "some shape is not handeled");
         }
-        
-        recalculate_intersections();
+
+        for (std::size_t i = 0; i < shapes_.size() - 1; ++ i)
+            shapes_.back()->intersect(*shapes_[i], points_);
     }
 
     void draw_shape(gl::drawing_manager mgr, math::vec2 to) {
@@ -146,28 +152,6 @@ private:
         circle(point, inner_point_size).fill(mgr); 
     }
 
-    void recalculate_intersections() {
-        points_.clear();
-        for (std::size_t i = 0; i < shapes_.size(); ++ i)
-            for (std::size_t j = i + 1; j < shapes_.size(); ++ j)
-                shapes_[i]->intersect(*shapes_[j], points_);
-
-        for (auto &&manual_point: manual_points_)
-            points_.push_back(manual_point);
-
-        for (int i = 0; i < (int) points_.size(); ++ i)
-            for (int j = 0; j < (int) points_.size(); ++ j) {
-                if (i == j)
-                    break;
-
-                if ((points_[i] - points_[j]).len() <= 1e-2) {
-                    points_.erase(points_.begin() + (j --));
-                    break;
-                }
-            }
-        
-    }
-
     void draw_points(gl::drawing_manager mgr) {
         for (int i = 0; i < static_cast<int>(points_.size()); ++ i) {
             if (selected_point_ == i)
@@ -186,6 +170,7 @@ private:
         for (auto &&shape: shapes_)
             shape->draw(mgr);
     }
+    
 };
 
 int main() {

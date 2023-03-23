@@ -212,6 +212,9 @@ namespace gl {
 
         window(int width, int height, const char* title);
 
+        virtual int desired_fps() { return -1 /* uncapped */; };
+        virtual bool should_redraw_in_loop() { return true; };
+
         // This class shouldn't be copied or moved
         window(const window&) = delete;
         window& operator=(const window&) = delete;
@@ -225,10 +228,11 @@ namespace gl {
 
         virtual void setup() {};
         virtual void draw() = 0;
+        void redraw();
 
         virtual void on_fps_updated() {};
 
-        virtual void on_key_event([[maybe_unused]] gl::key pressed_key, gl::action action) {}
+        virtual void on_key_event([[maybe_unused]] gl::key pressed_key, [[maybe_unused]] gl::action action) {}
         virtual void on_mouse_move_event([[maybe_unused]] math::vec2 cursor) {}
         virtual void on_mouse_button_event([[maybe_unused]] math::vec2 cursor,
                                            [[maybe_unused]] gl::mouse_button button,
