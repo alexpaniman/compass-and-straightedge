@@ -41,7 +41,7 @@ namespace gl::imgui {
 
         void window_setup() override final;
 
-        void on_key_event(gl::key pressed_key, gl::action action) override {
+        void on_key_event(gl::key pressed_key, gl::action action) override final {
             // TODO: fix imgui events for this:
 
             // ImGuiIO& io = ImGui::GetIO();
@@ -55,7 +55,7 @@ namespace gl::imgui {
         virtual void on_key_pressed(gl::key key, gl::action action) {}
 
 
-        void on_mouse_move_event(math::vec2 cursor) override {
+        void on_mouse_move_event(math::vec2 cursor) override final {
             ImGuiIO& io = ImGui::GetIO();
 
             double xpos, ypos;
@@ -70,7 +70,7 @@ namespace gl::imgui {
         virtual void on_mouse_moved([[maybe_unused]] math::vec2 cursor) {}
 
 
-        void on_mouse_button_event(math::vec2 cursor, gl::mouse_button button, gl::action action) override {
+        void on_mouse_button_event(math::vec2 cursor, gl::mouse_button button, gl::action action) override final {
             ImGuiIO& io = ImGui::GetIO();
             io.AddMouseButtonEvent(static_cast<int>(button), action == gl::action::PRESS);
 
@@ -79,6 +79,12 @@ namespace gl::imgui {
         }
 
         virtual void on_mouse_pressed(math::vec2 cursor, gl::mouse_button button, gl::action action) {}
+
+
+        void on_resize_event(math::vec<int, 2> /* old_size */) override final {
+            vector_renderer.transformer = default_scaling();
+        }
+
 
     private:
         simple_drawing_renderer<details::ui_vector_drawing_adapter> vector_renderer =

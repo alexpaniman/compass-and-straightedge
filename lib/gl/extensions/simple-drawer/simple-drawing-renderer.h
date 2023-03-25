@@ -22,12 +22,15 @@ namespace gl {
         void draw()  override final {
             m_verticies.clear();
 
-            drawing_manager draw_mgr { m_verticies };
+            drawing_manager draw_mgr = drawing_manager { m_verticies }.with_applied(transformer);
             m_draw(draw_mgr);
 
             m_verticies.update();
             gl::draw(gl::drawing_type::TRIANGLES, m_verticies, m_gradient_shader);
         }
+
+        // TODO: make private
+        math::axes transformer = { { -1.f, -1.f }, { 1.f, 1.f } };
 
     private:
         gl::shaders::shader_program m_gradient_shader;

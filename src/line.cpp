@@ -64,18 +64,15 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
 }
 
 
-static inline bool within_view(math::vec2 point) {
-    return point.x() >= -1.0f && point.y() >= -1.0f && point.x() <= 1.0f && point.y() <= 1.0f;
-}
-
 static void draw_continuation_dashed(gl::drawing_manager mgr, math::vec2 from, math::vec2 to) {
+
     math::vec2 direction = (from - to).normalize();
 
     constexpr double fill_len = 0.05;
     constexpr double frag_len = 0.02 + fill_len;
     for (int i = 0; ; ++ i) {
         math::vec2 starting_point = direction * frag_len * i + from;
-        if (!within_view(starting_point))
+        if (!mgr.screen().contains(starting_point))
             break;
 
         mgr.draw_line(starting_point, starting_point + direction * fill_len);

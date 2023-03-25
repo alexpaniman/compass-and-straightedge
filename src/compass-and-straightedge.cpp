@@ -35,7 +35,7 @@ public:
     void draw_main(gl::drawing_manager mgr) override {
         // draw background:
         mgr.set_color({ 0.13f, 0.11f, 0.12f });
-        mgr.draw_rectangle({ -1.0f, -1.0f }, { 1.0f, 1.0f });
+        mgr.draw_rectangle(mgr.screen());
 
         // draw shapes:
         mgr.set_color({ 0.67f, 0.6f, 0.82f });

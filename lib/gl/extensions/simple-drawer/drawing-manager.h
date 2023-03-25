@@ -3,6 +3,7 @@
 #include "axes.h"
 #include "colored-vertex.h"
 #include "opengl-setup.h"
+#include "rect.h"
 #include "vertex-vector-array.h"
 #include "vec.h"
 
@@ -31,6 +32,7 @@ namespace gl {
         void draw_triangle(math::vec2 p0, math::vec2 p1, math::vec2 p2);
 
         void draw_rectangle(math::vec2 x0, math::vec2 x1);
+        void draw_rectangle(math::rectangle rect) { draw_rectangle(rect.x0, rect.x1); }
 
         void draw_line(math::vec2 from, math::vec2 to);
         void draw_antialiased_line(math::vec2 from, math::vec2 to,
@@ -44,6 +46,13 @@ namespace gl {
     public:
         // ==> Current settings:
         math::axes m_axes;
+
+        math::rectangle screen() {
+            return math::rectangle {
+                m_axes.get_world_coordinates({ -1.f, -1.f }),
+                m_axes.get_world_coordinates({  1.f,  1.f }),
+            };
+        }
 
     private:
         math::vec3 m_current_color;

@@ -192,7 +192,7 @@ namespace gl {
     static std::map<GLFWwindow*, gl::window*> window_mapping {};
 
     window::window(const int width, const int height, const char* title)
-        : width(width), height(height), current_fps(0) {
+        : width(width), height(height), current_fps(0), initial_size { width, height } {
 
         if (!glfwInit())
             throw std::runtime_error("Failed to initialize glfw!");
@@ -284,15 +284,29 @@ namespace gl {
         if (ypos < 0)
             return {};
 
-        return math::vec {
+        math::axes ax = default_scaling();
+        return ax.get_world_coordinates({
             static_cast<float>(xpos / (this->width  / 2.0) - 1.0),
             static_cast<float>(ypos / (this->height / 2.0) - 1.0)
-        };
+        });
     }
 
     void window::redraw() {
-        gl::raw::clear(GL_COLOR_BUFFER_BIT);
         draw();
+    }
+
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+        gl::window &current_window = *window_mapping[window];
+
+        math::vec<int, 2> old_size = { current_window.width, current_window.height };
+
+        current_window.width = width;
+        current_window.height = height;
+
+        glViewport(0, 0, width, height);
+
+        current_window.on_resize_event(old_size);
+        current_window.redraw();
     }
 
     void window::draw_loop() {
@@ -301,6 +315,7 @@ namespace gl {
         glfwSetKeyCallback(this->glfw_window, &key_press_callback);
         glfwSetCursorPosCallback(this->glfw_window, &mouse_press_callback);
         glfwSetMouseButtonCallback(this->glfw_window, &mouse_button_callback);
+        glfwSetFramebufferSizeCallback(this->glfw_window, &framebuffer_size_callback);
 
         static int fps_counter = 0;
 

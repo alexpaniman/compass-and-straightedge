@@ -10,7 +10,9 @@
 #include <vector>
 #include <map>
 
+#include "axes.h"
 #include "math.h"
+#include "rect.h"
 #include "vec.h"
 #include "vertex-array.h"
 #include "vertex-vector-array.h"
@@ -208,7 +210,8 @@ namespace gl {
 
     class window {
     public:
-        const int width, height;
+        const math::vec<int, 2> initial_size;
+        int width, height;
 
         window(int width, int height, const char* title);
 
@@ -232,6 +235,7 @@ namespace gl {
 
         virtual void on_fps_updated() {};
 
+        virtual void on_resize_event([[maybe_unused]] math::vec<int, 2> old_size) {}
         virtual void on_key_event([[maybe_unused]] gl::key pressed_key, [[maybe_unused]] gl::action action) {}
         virtual void on_mouse_move_event([[maybe_unused]] math::vec2 cursor) {}
         virtual void on_mouse_button_event([[maybe_unused]] math::vec2 cursor,
@@ -242,9 +246,31 @@ namespace gl {
 
         std::optional<math::vec2> get_cursor_position() const;
 
+    protected:
+        math::axes default_scaling() const {
+            math::axes ax {};
+            math::rectangle &view = ax.m_view;
+
+            float end_x = 2. * initial_size.x() / (float) width  - 1.;
+            float end_y = 2. * initial_size.y() / (float) height - 1.;
+
+            view.x1 = { end_x, end_y };
+
+            return ax;
+        }
+
+        math::rectangle screen() { return math::rectangle { screen_x0(), screen_x1() }; }
+
     private:
         int current_fps;
         GLFWwindow* glfw_window;
+
+        math::vec2 screen_x1() {
+            return { 2.f * width  / initial_size.x() - 1.f,
+                     2.f * height / initial_size.y() - 1.f };
+        }
+        
+        math::vec2 screen_x0() { return -1 * screen_x1(); }
     };
 
     enum class drawing_type {
