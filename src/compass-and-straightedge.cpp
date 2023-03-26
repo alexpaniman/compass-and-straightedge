@@ -33,29 +33,39 @@ public:
     }
 
     void draw_main(gl::drawing_manager mgr) override {
-        // draw background:
-        mgr.set_color({ 0.13f, 0.11f, 0.12f });
+        // ==> draw background:
+        mgr.set_outer_color(background_color);
         mgr.draw_rectangle(mgr.screen());
-
-        // draw shapes:
-        mgr.set_color({ 0.67f, 0.6f, 0.82f });
-        mgr.set_width(0.007f);
 
         draw_shapes(mgr);
 
         if (auto cursor = get_cursor_position())
-            draw_shape(mgr, *cursor);
+            draw_shape_with_intersections(mgr, *cursor);
 
-        // draw their intersections:
+        // ==> draw persistent points:
         draw_points(mgr);
     }
 
     void on_mouse_moved(math::vec2 cursor) override {
+        // ==> distance compared to thickness of object to think that it's selected:
+        constexpr double trigger_multiplier = 1.5f;
+
         hovered_point_ = -1;
 
         for (int i = points_.size() - 1; i >= 0; -- i)
-            if ((points_[i] - cursor).len() <= 0.01f) {
+            if ((points_[i] - cursor).len() <= trigger_multiplier * outer_point_size) {
                 hovered_point_ = i; // select button when hovered over
+                return;
+            }
+
+        selected_shape_ = -1;
+
+        if (active_tool_ != poke_point)
+            return;
+
+        for (int i = shapes_.size() - 1; i >= 0; -- i)
+            if (shapes_[i]->distance(cursor) <= trigger_multiplier * shape_stroke_width) {
+                selected_shape_ = i;
                 return;
             }
     }
@@ -68,7 +78,11 @@ public:
             return;
 
         if (active_tool_ == poke_point) {
-            points_.emplace_back(cursor);
+            if (selected_shape_ != -1)
+                points_.emplace_back(shapes_[selected_shape_]->project(cursor));
+            else
+                points_.emplace_back(cursor);
+
             return;
         }
 
@@ -88,6 +102,8 @@ private:
 
     int selected_point_ = -1;
     int  hovered_point_ = -1;
+
+    int selected_shape_ = -1;
 
     enum: int { poke_point = 0, compass = 1, ruler = 2 }
         active_tool_ = poke_point;
@@ -112,7 +128,28 @@ private:
             shapes_.back()->intersect(*shapes_[i], points_);
     }
 
-    void draw_shape(gl::drawing_manager mgr, math::vec2 to) {
+    void draw_shape(gl::drawing_manager mgr, const shape &target, bool override_colors = false) {
+        const char *shape_name = target.intersection_resolution_name();
+
+        mgr.set_width(shape_stroke_width);
+
+        if (!override_colors) {
+            using namespace std::string_literals;
+
+            /*---*/if ("circle"s == shape_name) {
+                mgr.set_outer_color(circle_color);
+            } else if (  "line"s == shape_name) {
+                mgr.set_outer_color(outer_line_color);
+                mgr.set_inner_color(inner_line_color);
+            } else {
+                assert(false && "unhandled shape type");
+            }
+        }
+
+        target.draw(mgr);
+    }
+
+    void draw_shape_with_intersections(gl::drawing_manager mgr, math::vec2 to) {
         if (active_tool_ == poke_point || selected_point_ == -1)
             return;
 
@@ -123,43 +160,40 @@ private:
 
         const shape *new_shape = nullptr;
 
-        if      (active_tool_ == compass)
+        /*---*/if (active_tool_ == compass) {
             new_shape = &target_circle;
-        else if (active_tool_ ==   ruler)
+        } else if (active_tool_ ==   ruler) {
             new_shape = &target_line;
-        else {
-            assert(false && "some shape is not handeled");
+        } else {
+            assert(false && "unhandled shape type");
         }
         
         std::vector<math::vec2> intersection_points;
         for (auto &&shape: shapes_)
             shape->intersect(*new_shape, intersection_points);
 
-        new_shape->draw(mgr);
+        draw_shape(mgr, *new_shape);
 
-        mgr.set_color({ 0.46f, 0.86f, 0.91f });
+        mgr.set_outer_color(new_intersection_color);
         for (auto &&point: intersection_points)
             draw_point(mgr, point);
     }
 
     void draw_point(gl::drawing_manager mgr, math::vec2 point) {
-        constexpr double outer_point_size = 0.01;
-        constexpr double inner_point_size = 0.007;
-
         circle(point, outer_point_size).fill(mgr);
 
-        mgr.set_color({ 0.13f, 0.11f, 0.12f });
+        mgr.set_outer_color(background_color);
         circle(point, inner_point_size).fill(mgr); 
     }
 
     void draw_points(gl::drawing_manager mgr) {
         for (int i = 0; i < static_cast<int>(points_.size()); ++ i) {
             if (selected_point_ == i)
-                mgr.set_color({ 0.9f, 0.2f, 0.3f });
+                mgr.set_outer_color(selected_point_color);
             else if (hovered_point_ == i)
-                mgr.set_color({ 0.3f, 0.2f, 0.9f });
+                mgr.set_outer_color(hovered_point_color);
             else
-                mgr.set_color({ .65f, .85f, .46f });
+                mgr.set_outer_color(point_color);
 
             draw_point(mgr, points_[i]);
         }
@@ -167,10 +201,49 @@ private:
     }
 
     void draw_shapes(gl::drawing_manager mgr) {
-        for (auto &&shape: shapes_)
-            shape->draw(mgr);
+        for (int i = 0; i < shapes_.size(); ++ i) {
+            const shape &current_shape = *shapes_[i];
+
+            // ==> draw selected shape if it's selected:
+            if (selected_shape_ == i) {
+                mgr.set_outer_color(selected_shape_color);
+                mgr.set_inner_color(selected_shape_color);
+
+                draw_shape(mgr, current_shape, /* override colors */ true);
+                continue;
+            }
+
+            draw_shape(mgr, current_shape);
+        }
     }
+
+private:
+    //          ==> general look configuration <==
+
+    // ==> canvas background color:
+    math::vec3 background_color       = { 0.13f, 0.11f, 0.12f };
+
+    // ==> default shape colors
+    math::vec3           circle_color = { 0.67f, 0.60f, 0.82f };
+
+    math::vec3       inner_line_color = { 0.90f, 0.20f, 0.30f };
+    math::vec3       outer_line_color = { 0.99f, 0.59f, 0.39f };
+
+    math::vec3            point_color = { 0.65f, 0.85f, 0.46f };
+
+    // ==> selection colors
+    math::vec3   selected_shape_color = { 0.20f, 0.70f, 0.60f };
+
+    math::vec3   selected_point_color = { 0.90f, 0.20f, 0.30f };
+    math::vec3    hovered_point_color = { 0.30f, 0.20f, 0.90f };
+
+    math::vec3 new_intersection_color = { 0.46f, 0.86f, 0.91f };
     
+    // ==> object and point width:
+    double         shape_stroke_width = 0.007;
+
+    double           outer_point_size = 0.01;
+    double           inner_point_size = 0.007;
 };
 
 int main() {

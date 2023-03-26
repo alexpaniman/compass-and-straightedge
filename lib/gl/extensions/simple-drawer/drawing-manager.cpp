@@ -5,9 +5,8 @@
 
 namespace gl {
 
-    void drawing_manager::set_color(math::vec3 color) {
-        m_current_color = { color.r(), color.g(), color.b() };
-    }
+    void drawing_manager::set_outer_color(math::vec3 color) { m_stroke_color = color; }
+    void drawing_manager::set_inner_color(math::vec3 color) {   m_fill_color = color; }
 
     void drawing_manager::set_axes(math::axes axes) { m_axes = axes; }
 
@@ -40,9 +39,9 @@ namespace gl {
     }
 
     void drawing_manager::draw_triangle(math::vec2 p0, math::vec2 p1, math::vec2 p2) {
-        draw_interpolated_triangle({ p0, m_current_color },
-                                   { p1, m_current_color },
-                                   { p2, m_current_color });
+        draw_interpolated_triangle({ p0, m_stroke_color },
+                                   { p1, m_stroke_color },
+                                   { p2, m_stroke_color });
     }
 
 

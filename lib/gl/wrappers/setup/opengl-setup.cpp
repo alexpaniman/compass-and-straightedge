@@ -292,6 +292,7 @@ namespace gl {
     }
 
     void window::redraw() {
+        gl::raw::clear(GL_COLOR_BUFFER_BIT);
         draw();
     }
 

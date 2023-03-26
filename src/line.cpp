@@ -64,6 +64,12 @@ bool line::intersect_circle(const circle& circle, std::vector<math::vec2> &point
 }
 
 
+math::vec2 line::project(math::vec2 point) const noexcept {
+    math::vec2 direction = (x1 - x0).normalize();
+    return direction * direction.dot(point - x0) + x0;
+}
+
+
 static void draw_continuation_dashed(gl::drawing_manager mgr, math::vec2 from, math::vec2 to) {
 
     math::vec2 direction = (from - to).normalize();
@@ -80,10 +86,15 @@ static void draw_continuation_dashed(gl::drawing_manager mgr, math::vec2 from, m
 }
 
 void line::draw(gl::drawing_manager mgr) const {
-    mgr.set_color({ 0.9f, 0.2f, 0.3f });
+    // mgr.set_color({ 0.9f, 0.2f, 0.3f });
+    math::vec3 stroke_color = mgr.stroke_color();
+
+    mgr.set_outer_color(mgr.fill_color());
     mgr.draw_line(x0, x1);
 
-    mgr.set_color({ 0.99f, 0.59f, 0.39f });
+    // mgr.set_stroke_color({ 0.99f, 0.59f, 0.39f });
+
+    mgr.set_outer_color(stroke_color);
     draw_continuation_dashed(mgr, x1, x0);
     draw_continuation_dashed(mgr, x0, x1);
 }

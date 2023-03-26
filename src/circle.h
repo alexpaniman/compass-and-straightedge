@@ -17,7 +17,6 @@ public:
     const char* intersection_resolution_name() const noexcept override { return "circle"; }
 
     bool intersect_circle(const circle &other, std::vector<math::vec2> &points) const noexcept;
-
     bool intersect(const shape &other, std::vector<math::vec2> &points) const noexcept override {
         static intersection_map<circle> intersection_map {
             { "circle", &circle::intersect_circle }
@@ -25,6 +24,9 @@ public:
 
         return intersection_map.intersect(*this, other, points);
     }
+
+
+    math::vec2 project(math::vec2 point) const noexcept override;
 
 
     void draw(gl::drawing_manager mgr) const override;

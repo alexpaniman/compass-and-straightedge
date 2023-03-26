@@ -12,12 +12,20 @@ namespace gl {
     class drawing_manager {
     public:
         // Uses black color by default
-        drawing_manager(gl::vertex_vector_array<colored_vertex>& vertices)
-            : m_vertices(vertices), m_current_color(0.0f, 0.0f, 0.0f) {}
+        drawing_manager(gl::vertex_vector_array<colored_vertex>& vertices):
+            m_vertices(vertices),
+            m_stroke_color(0.0f, 0.0f, 0.0f),
+            m_fill_color  (0.0f, 0.0f, 0.0f) {}
+
+        // ==> Get     current settings:
+
+        math::vec3 stroke_color() { return m_stroke_color; }
+        math::vec3   fill_color() { return m_fill_color;   }
 
         // ==> Control current settings:
 
-        void set_color(math::vec3 color);
+        void set_outer_color(math::vec3 color);
+        void set_inner_color(math::vec3 color);
 
         void set_width(float width);
         void set_axes(math::axes axes);
@@ -55,7 +63,9 @@ namespace gl {
         }
 
     private:
-        math::vec3 m_current_color;
+        math::vec3 m_stroke_color;
+        math::vec3 m_fill_color;
+
         float m_width;
     };
 

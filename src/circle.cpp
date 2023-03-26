@@ -54,6 +54,11 @@ static inline void draw_or_fill(const circle &circle, gl::drawing_manager mgr) {
     }
 }
 
+math::vec2 circle::project(math::vec2 point) const noexcept {
+    math::vec direction = (point - center).normalize();
+    return center + radius * direction;
+}
+
 void circle::draw(gl::drawing_manager mgr) const { draw_or_fill</* fill = */false>(*this, mgr); }
 void circle::fill(gl::drawing_manager mgr) const {
     draw_or_fill</* fill = */true>(*this, mgr);
