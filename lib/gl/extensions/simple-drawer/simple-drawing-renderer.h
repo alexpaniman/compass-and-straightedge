@@ -30,7 +30,7 @@ namespace gl {
         }
 
         // TODO: make private
-        math::axes transformer = { { -1.f, -1.f }, { 1.f, 1.f } };
+        math::axes transformer = math::rectangle { { -1.f, -1.f }, { 1.f, 1.f } };
 
     private:
         gl::shaders::shader_program m_gradient_shader;

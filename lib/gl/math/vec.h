@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bits/utility.h>
 #include <cmath>
 #include <concepts>
 #include <cstdlib>
