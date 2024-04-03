@@ -1,5 +1,6 @@
 #pragma once
 
+#include "resource-loader.h"
 #include "drawing-manager.h"
 #include "opengl-setup.h"
 #include "renderer.h"
@@ -14,7 +15,7 @@ namespace gl {
             : m_draw(draw) {}
 
         void setup() override final {
-            m_gradient_shader.from_file("res/gradient.glsl");
+            m_gradient_shader.from_file(get_resource_path("gradient.glsl"));
             m_verticies.set_layout(math::vector_layout<float, 2>() +
                                    math::vector_layout<float, 3>());
         }
@@ -45,7 +46,7 @@ namespace gl {
         vector_renderer() = default;
 
         void setup() override final {
-            m_gradient_shader.from_file("res/gradient.glsl");
+            m_gradient_shader.from_file(get_resource_path("gradient.glsl"));
             m_verticies.set_layout(math::vector_layout<float, 2>() +
                                    math::vector_layout<float, 3>());
         }

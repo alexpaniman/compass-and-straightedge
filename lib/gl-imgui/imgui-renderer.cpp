@@ -5,6 +5,7 @@
 #include "imgui_impl_opengl3.h"
 #include "renderer.h"
 
+#include "resource-loader.h"
 #include "icons-font-awesome-5.h"
 
 #include <exception>
@@ -55,6 +56,9 @@ namespace gl::imgui {
         ImGui_ImplGlfw_InitForOpenGL(this->get_glfw_window(), true);
         ImGui_ImplOpenGL3_Init(opengl_version.c_str());
 
+        // Disable by-default saving layout in imgui.ini 
+        ImGui::GetIO().IniFilename = NULL;
+
         // Setup renderers
         setup_current_renderer(ui_renderer);
         setup_current_renderer(main_renderer);
@@ -71,7 +75,10 @@ namespace gl::imgui {
         icons_config.MergeMode  = true;
         icons_config.PixelSnapH = true;
 
-        io.Fonts->AddFontFromFileTTF("res/fa-solid-900.ttf", 16.0f, &icons_config, icons_ranges);
+        io.Fonts->AddFontFromFileTTF(
+            get_resource_path("fa-solid-900.ttf").c_str(),
+            16.0f, &icons_config, icons_ranges
+        );
     };
 
     void imgui_renderer::draw()  {

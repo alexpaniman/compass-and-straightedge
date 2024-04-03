@@ -7,3 +7,5 @@ set_target_properties(compass-and-straightedge PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
 target_link_libraries(compass-and-straightedge gl-imgui)
+
+install(TARGETS compass-and-straightedge DESTINATION bin)

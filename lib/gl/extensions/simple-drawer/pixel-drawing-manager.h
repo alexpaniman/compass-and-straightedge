@@ -1,11 +1,12 @@
 #pragma once
 
 #include "colored-vertex.h"
-#include "drawing-manager.h"
 #include "opengl-setup.h"
 #include "vec-layout.h"
 #include "vec.h"
 #include "vertex-vector-array.h"
+#include "resource-loader.h"
+
 #include <cstddef>
 
 namespace gl {
@@ -16,7 +17,7 @@ namespace gl {
         using gl::window::window;
 
         void setup() override {
-            gradient_shader.from_file("res/gradient.glsl");
+            gradient_shader.from_file(get_resource_path("gradient.glsl"));
             vertices.set_layout(math::vector_layout<float, 2>() +
                                 math::vector_layout<float, 3>());
 
