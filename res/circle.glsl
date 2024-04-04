@@ -1,6 +1,6 @@
 #shader vertex   ------------------------------------------------------------------------------------------
 
-#version 460 core
+#version 440 core
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 color;
@@ -14,7 +14,7 @@ void main() {
 
 #shader fragment ------------------------------------------------------------------------------------------
 
-#version 460 core
+#version 440 core
 
 in vec4 frag_color;
 out vec4 color;
