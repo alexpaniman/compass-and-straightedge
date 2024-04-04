@@ -12,6 +12,7 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [ nixgl.overlay ];
+        config.allowUnfree = true;
       };
     in
   {
@@ -44,9 +45,9 @@
 
         mv "$wrapper" "$wrapped"
 
-        echo "#! @shell@ -e"                                       > "$wrapper"
-        echo "export GLNIMAN_RES_HOME='$out/res'"                 >> "$wrapper"
-        echo "${pkgs.nixgl.nixGLIntel}/bin/nixGLIntel '$wrapped'" >> "$wrapper"
+        echo "#! @shell@ -e"                                         > "$wrapper"
+        echo "export GLNIMAN_RES_HOME='$out/res'"                   >> "$wrapper"
+        echo "${pkgs.nixgl.auto.nixGLDefault}/bin/nixGL '$wrapped'" >> "$wrapper"
 
         chmod +x "$wrapper"
         substituteAllInPlace "$wrapper"
