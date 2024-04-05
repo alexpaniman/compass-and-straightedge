@@ -43,7 +43,7 @@ namespace gl::imgui {
     // This wrapper isn't designed to be portable,
     // and besides version 440 is pretty available
     // on PC's. So I'm just hardcoding it:
-    static const std::string opengl_version = "#version 440"; 
+    static const std::string opengl_version = "#version 410"; 
 
     void imgui_renderer::setup() {
         IMGUI_CHECKVERSION();
