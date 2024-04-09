@@ -1,12 +1,9 @@
-#include "drawing-manager.h"
 #include "gl-imgui.h"
 
-#include "imgui.h"
-#include "line.h"
-#include "circle.h"
+#include "shapes/line.h"
+#include "shapes/circle.h"
 
 #include "icons-font-awesome-5.h"
-#include "opengl-setup.h"
 
 #include <memory>
 
@@ -28,6 +25,14 @@ public:
         ImGui::RadioButton(ICON_FA_TIMES_CIRCLE     " Point"  , active_tool_ptr, poke_point);
         ImGui::RadioButton(ICON_FA_DRAFTING_COMPASS " Compass", active_tool_ptr, compass);
         ImGui::RadioButton(ICON_FA_RULER            " Line"   , active_tool_ptr, ruler);
+
+        ImGui::End();
+
+        ImGui::Begin("Objects", nullptr, ImGuiWindowFlags_NoDecoration);
+
+        for (auto &shape: shapes_)
+            ImGui::Text("%s", shape->intersection_resolution_name());
+
 
         ImGui::End();
     }
@@ -180,10 +185,6 @@ private:
     }
 
     void draw_point(gl::drawing_manager mgr, math::vec2 point) {
-        circle(point, outer_point_size).fill(mgr);
-
-        mgr.set_outer_color(background_color);
-        circle(point, inner_point_size).fill(mgr); 
     }
 
     void draw_points(gl::drawing_manager mgr) {
@@ -221,7 +222,7 @@ private:
     //          ==> general look configuration <==
 
     // ==> canvas background color:
-    math::vec3 background_color       = { 0.13f, 0.11f, 0.12f };
+    math::vec3       background_color = { 0.13f, 0.11f, 0.12f };
 
     // ==> default shape colors
     math::vec3           circle_color = { 0.67f, 0.60f, 0.82f };
@@ -241,9 +242,6 @@ private:
     
     // ==> object and point width:
     double         shape_stroke_width = 0.007;
-
-    double           outer_point_size = 0.01;
-    double           inner_point_size = 0.007;
 };
 
 int main() {
