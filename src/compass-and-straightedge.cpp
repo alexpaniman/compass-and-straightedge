@@ -78,6 +78,15 @@ public:
             selected_point_  = -1;
         }
 
+        if (button == gl::mouse_button::RIGHT && active_tool_ == ruler
+            && hovered_point_ == -1 && selected_point_ != -1) {
+
+            vec2 starting_point = points_[selected_point_];
+            shapes_.emplace_back(new line(starting_point, starting_point + vec2 { 0.f, -1e5f }));
+
+            selected_point_ = -1;
+        }
+
         if (button != gl::mouse_button::LEFT)
             return;
 
