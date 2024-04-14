@@ -71,6 +71,9 @@ public:
     }
 
     void on_mouse_pressed(math::vec2 cursor, gl::mouse_button button, gl::action action) override {
+        if (action != gl::action::PRESS)
+            return;
+
         if (button == gl::mouse_button::RIGHT && active_tool_ == compass
             && hovered_point_ != -1 && selected_point_ != -1) {
 
@@ -93,8 +96,6 @@ public:
         if (button != gl::mouse_button::LEFT)
             return;
 
-        if (action != gl::action::PRESS)
-            return;
 
         if (active_tool_ == poke_point) {
             if (selected_shape_ != -1)
