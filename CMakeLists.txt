@@ -1,13 +1,13 @@
 # ==> Ensure proper CMake support
-
 cmake_minimum_required(VERSION 3.10)
+
+
+project(compass-and-straightedge VERSION 1.0)
 
 # ==> Force new C++ standard (we like new features here)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-project(vector-drawer VERSION 1.0)
 
 # ==> Build in release by default (makes difference for graphical projects)
 
