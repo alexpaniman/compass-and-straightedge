@@ -82,9 +82,12 @@ public:
             && hovered_point_ == -1 && selected_point_ != -1) {
 
             vec2 starting_point = points_[selected_point_];
+
             shapes_.emplace_back(new line(starting_point, starting_point + vec2 { 0.f, -1e5f }));
+            add_last_shape_intersections();
 
             selected_point_ = -1;
+            return;
         }
 
         if (button != gl::mouse_button::LEFT)
@@ -111,6 +114,8 @@ public:
         selected_point_ = hovered_point_;
         if (selected_radius_ != -1) {
             shapes_.emplace_back(new circle(points_[selected_point_], selected_radius_));
+            add_last_shape_intersections();
+
             selected_point_ = -1;
             selected_radius_ = -1;
         }
@@ -145,7 +150,10 @@ private:
         else {
             assert(false && "some shape is not handeled");
         }
+        add_last_shape_intersections();
+    }
 
+    void add_last_shape_intersections() {
         for (std::size_t i = 0; i < shapes_.size() - 1; ++ i)
             shapes_.back()->intersect(*shapes_[i], points_);
     }
