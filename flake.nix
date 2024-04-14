@@ -3,17 +3,12 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixgl.url = "github:nix-community/nixGL";
   };
 
-  outputs = { self, nixpkgs, nixgl }:
+  outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ nixgl.overlay ];
-        config.allowUnfree = true;
-      };
+      pkgs = import nixpkgs { inherit system; };
     in
   {
 
@@ -36,21 +31,8 @@
       cmakeFlags = [ "-DCMAKE_BUILD_TYPE=Release" ];
 
       postFixup = ''
-        cp -r "$src/res" "$out"
-
-        executable_name="compass-and-straightedge"
-
-        wrapper="$out/bin/''${executable_name}"
-        wrapped="$out/bin/.''${executable_name}-wrapped"
-
-        mv "$wrapper" "$wrapped"
-
-        echo "#! @shell@ -e"                                         > "$wrapper"
-        echo "export GLNIMAN_RES_HOME='$out/res'"                   >> "$wrapper"
-        echo "${pkgs.nixgl.auto.nixGLDefault}/bin/nixGL '$wrapped'" >> "$wrapper"
-
-        chmod +x "$wrapper"
-        substituteAllInPlace "$wrapper"
+        cp -r $src/res $out
+        wrapProgram $out/bin/compass-and-straightedge --set GLNIMAN_RES_HOME $out/res
       '';
     };
 
