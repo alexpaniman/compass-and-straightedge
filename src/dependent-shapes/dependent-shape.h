@@ -65,7 +65,7 @@ public:
 private:
     point point_;
 
-    dependent_shape *intersecting_shapes_[2];
+    shape &shape_1, 
 
     // Two shapes can have arbitrary many intersections, but this class
     // represents only one intersection point, no more, no less -- just one.
@@ -81,7 +81,7 @@ private:
     int intersection_id_;
 
     dependent_intersection_point(dependent_shape &a, dependent_shape &b, int id):
-        intersecting_shapes_ { &a, &b }, point_({}) {
+        intersecting_shapes_ { &a, &b }, point_({ 0.f, 0.f }) {
         recalculate(); // TODO:          ^~~~~~ inline init
                        //       would be very nice to do here
     }
@@ -113,6 +113,9 @@ private:
 
 // TODO: WRITE: Finished off here, continue implementing...
 class dependent_circle: public dependent_shape {
+public:
+    shape &point;
+
 private:
     dependent_shape *from, *to;
 
