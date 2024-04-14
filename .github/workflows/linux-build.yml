@@ -10,7 +10,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  linux-build:
+  ubuntu-build-clang:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +24,24 @@ jobs:
 
     - name: Configure
       run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+  ubuntu-build-gcc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: cmake gcc libglew-dev libglfw3-dev
+
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
