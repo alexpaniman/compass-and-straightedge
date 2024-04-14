@@ -71,6 +71,13 @@ public:
     }
 
     void on_mouse_pressed(math::vec2 cursor, gl::mouse_button button, gl::action action) override {
+        if (button == gl::mouse_button::RIGHT && active_tool_ == compass
+            && hovered_point_ != -1 && selected_point_ != -1) {
+
+            selected_radius_ = (points_[hovered_point_] - points_[selected_point_]).len();
+            selected_point_  = -1;
+        }
+
         if (button != gl::mouse_button::LEFT)
             return;
 
@@ -93,6 +100,11 @@ public:
         }
 
         selected_point_ = hovered_point_;
+        if (selected_radius_ != -1) {
+            shapes_.emplace_back(new circle(points_[selected_point_], selected_radius_));
+            selected_point_ = -1;
+            selected_radius_ = -1;
+        }
     }
 
 private:
@@ -104,6 +116,7 @@ private:
     int  hovered_point_ = -1;
 
     int selected_shape_ = -1;
+    float selected_radius_ = -1;
 
     enum: int { poke_point = 0, compass = 1, ruler = 2 }
         active_tool_ = poke_point;
