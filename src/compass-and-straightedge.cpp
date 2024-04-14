@@ -113,6 +113,11 @@ public:
 
         selected_point_ = hovered_point_;
         if (selected_radius_ != -1) {
+            if (selected_point_ == -1) {
+                selected_radius_ = -1;
+                return;
+            }
+
             shapes_.emplace_back(new circle(points_[selected_point_], selected_radius_));
             add_last_shape_intersections();
 
