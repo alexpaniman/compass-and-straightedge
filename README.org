@@ -22,7 +22,7 @@ Even though, there are only three available tools, you can still build pretty co
 
 If you are using nixos or nix package manager in general --- you are in luck, this package provides convenient flake that should take care of building and running this project properly.
 #+begin_src shell
-  nix run github:alexpaniman/compass-and-straightedge/v1.0 --impure
+  nix run github:alexpaniman/compass-and-straightedge/v1.1 --impure
 #+end_src shell
 
 This one command should do everything from installing dependencies to building and running (God I love nix)... Enjoy! Also, for impurity of this flake blame Nvidia and video drivers in general, not me :)
@@ -68,7 +68,7 @@ hasn't been tested on either.
 It's not necessary, but I strongly recommend you to checkout latest "tagged" version of this repository as it's known to build well and run at least somewhere (so it's "stable"). No promises about building and running for other versions even under perfect circumstances, haha. 
 
 #+begin_src shell
-  git switch --detach v1.0
+  git switch --detach v1.1
 #+end_src
 
 *Then, create build directory and configure:*

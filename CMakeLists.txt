@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 
-project(compass-and-straightedge VERSION 1.0)
+project(compass-and-straightedge VERSION 1.1)
 
 # ==> Force new C++ standard (we like new features here)
 
